@@ -19,11 +19,11 @@
       <div class="radio-container">
         <form>
           <label>
-            <input type="radio" name="radio" checked/>
-            <span><img src="./img/x.svg" alt="cross-sign"></span>
+            <input id="sign-x" type="radio" name="radio" checked/>
+            <span><img id="small-x" src="./img/x.svg" alt="cross-sign"></span>
           </label>
           <label>
-            <input type="radio" name="radio"/>
+            <input id="sign-o" type="radio" name="radio"/>
             <span><img src="./img/circle.svg" alt="circle-sign"></span>
           </label>
         </form>
@@ -37,11 +37,11 @@
         <div class="radio-container">
           <form>
             <label>
-              <input type="radio" name="radio" checked/>
+              <input id="computer-smart" type="radio" name="radio" checked/>
               <span>&nbsp smart</span>
             </label>
             <label>
-              <input type="radio" name="radio"/>
+              <input id="computer-random" type="radio" name="radio"/>
               <span>&nbsp random</span>
             </label>
           </form>
@@ -50,23 +50,20 @@
     </div>
   </div>
 
-  <img class="sign-game-template" src="./img/x.svg" alt="cross-sign">
-  <img class="sign-game-template" src="./img/circle.svg" alt="circle-sign">
-
   <div class="grid-container">
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
-    <div class="grid-cell"></div>
+    <div id="1" class="grid-cell"></div>
+    <div id="2" class="grid-cell"></div>
+    <div id="3" class="grid-cell"><img id="x" src="./img/x.svg" alt="cross-sign"></div>
+    <div id="4" class="grid-cell"></div>
+    <div id="5" class="grid-cell"></div>
+    <div id="6" class="grid-cell"><img id="o" src="./img/circle.svg" alt="circle-sign"></div>
+    <div id="7" class="grid-cell"></div>
+    <div id="8" class="grid-cell"></div>
+    <div id="9" class="grid-cell"></div>
   </div>
 
   <div class="reset-container">
-    <button class="button-9" role="button">RESTART</button>
+    <button>RESTART</button>
   </div>
 
   <div class="footer-wrapper">
@@ -77,6 +74,9 @@
     </footer>
   </div>
 
+  <!-- Hidden template elements -->
+  <img id="x" class="sign-template" src="./img/x.svg" alt="cross-sign">
+  <img id="o" class="sign-template" src="./img/circle.svg" alt="circle-sign">
 </body>
 
 </html>

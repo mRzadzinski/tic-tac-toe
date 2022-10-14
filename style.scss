@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;500&display=swap');
 
-$responsive-width: clamp(400px, 50vw, 900px);
+$responsive-width: clamp(400px, 60vw, 900px);
 
 body {
     display: grid;
@@ -55,6 +55,11 @@ label {
 		height: auto;
 		margin-left: 1rem;
 	}
+
+	span > #small-x {
+		width: 1.73rem;
+		margin-left: 1.1rem;
+	}
 }
 
 .grid-container {
@@ -81,9 +86,13 @@ label {
 img {
 	width: 75px;
 	height: auto;
+
+	&#x {
+		width: 65px;
+	}
 }
 
-.sign-game-template {
+.sign-template {
 	display: none;
 }
 
@@ -164,7 +173,7 @@ label {
 }
 
 /* Button by Stripe */
-.button-9 {
+button {
   appearance: button;
   backface-visibility: hidden;
   background-color: $primary-color;
@@ -193,10 +202,10 @@ label {
   margin-top: 1rem;
 }
 
-.button-9:disabled {
+button:disabled {
   cursor: default;
 }
 
-.button-9:active {
+button:active {
   box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .2) 0 6px 15px 0, rgba(0, 0, 0, .1) 0 2px 2px 0, rgba(50, 151, 211, .3) 0 0 0 4px;
 }

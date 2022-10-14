@@ -17,7 +17,7 @@ body {
   grid-template-columns: 1fr 1fr;
   justify-items: center;
   align-items: center;
-  width: clamp(400px, 50vw, 900px);
+  width: clamp(400px, 60vw, 900px);
   height: 100%;
   padding-top: 2rem;
 }
@@ -49,6 +49,10 @@ label span > img {
   height: auto;
   margin-left: 1rem;
 }
+label span > #small-x {
+  width: 1.73rem;
+  margin-left: 1.1rem;
+}
 
 .grid-container {
   display: grid;
@@ -73,8 +77,11 @@ img {
   width: 75px;
   height: auto;
 }
+img#x {
+  width: 65px;
+}
 
-.sign-game-template {
+.sign-template {
   display: none;
 }
 
@@ -149,7 +156,7 @@ label span:before {
 }
 
 /* Button by Stripe */
-.button-9 {
+button {
   -webkit-appearance: button;
      -moz-appearance: button;
           appearance: button;
@@ -183,10 +190,10 @@ label span:before {
   margin-top: 1rem;
 }
 
-.button-9:disabled {
+button:disabled {
   cursor: default;
 }
 
-.button-9:active {
+button:active {
   box-shadow: rgba(50, 50, 93, 0.1) 0 0 0 1px inset, rgba(50, 50, 93, 0.2) 0 6px 15px 0, rgba(0, 0, 0, 0.1) 0 2px 2px 0, rgba(50, 151, 211, 0.3) 0 0 0 4px;
 }/*# sourceMappingURL=style.css.map */
