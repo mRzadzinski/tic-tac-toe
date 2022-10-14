@@ -1,9 +1,30 @@
+const playerChoices = (() => {
+    // Get data from inputs
+    const radioInputs = document.querySelectorAll('input');
+    let playerOptions = [];
+    
+    radioInputs.forEach(input => input.addEventListener('change', () => checkPlayerOptions()));
+    
+    checkPlayerOptions();
+    function checkPlayerOptions() {
+        playerOptions = [];
+        radioInputs.forEach(input => {
+            if (input.checked) {
+                playerOptions.push(input.id);
+            }
+        });
+    }
+    return {
+        playerOptions
+    }
+})();
+
 const gameStatus = (() => {
     const gridCells = document.querySelectorAll('.grid-cell');
     const gameBoardStatus = {};
 
-    // Check all grid cells if there are any signs and populate gameBoardStatus accordingly
-    function checkGameBoard() {
+    // Scan grid cells and populate gameBoardStatus object
+    function getGameBoardStatus() {
         gridCells.forEach(cell => {
             if (!cell.innerHTML) {
                 gameBoardStatus[cell.id] = 'empty';
@@ -18,28 +39,42 @@ const gameStatus = (() => {
             }
         });
     }
+    gridCells.forEach(cell => cell.addEventListener('click', () => gameplay.makeMove(cell)));
 
     return {
         gameBoardStatus,
-        checkGameBoard
+        getGameBoardStatus
     }
 })();
 
-const playerSection = (() => {
-    const radioInputs = document.querySelectorAll('input');
-    const playerOptions = [];
+const gameplay = (() => {
+    const xSign = document.querySelector('#x');
+    const oSign = document.querySelector('#o');
 
-    checkPlayerOptions();
-    function checkPlayerOptions() {
-        radioInputs.forEach(input => {
-            if (input.checked) {
-                playerOptions.push(input.id);
+    function makeMove(cell) {
+        const cellCheck = checkCell(cell);
+        playerMove();
+        computerMove();
+    }
+
+    function checkCell(cell) {
+        gameStatus.getGameBoardStatus();
+        for (let element in gameStatus.gameBoardStatus) {
+            if (element === cell.id) {
+                
             }
-        });
+        };
+    }
+
+    function playerMove() {
+
+    }
+
+    function computerMove() {
+
     }
 
     return {
-        radioInputs,
-        playerOptions
+        makeMove
     }
 })();
