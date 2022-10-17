@@ -1,27 +1,30 @@
 const playerChoices = (() => {
     // Get data from inputs
     const radioInputs = document.querySelectorAll('input');
-    let playerOptions = [];
-    
-    radioInputs.forEach(input => input.addEventListener('change', () => checkPlayerOptions()));
-    
-    checkPlayerOptions();
-    function checkPlayerOptions() {
-        playerOptions = [];
+    let playerOptions = function() {
+        let checked = [];
         radioInputs.forEach(input => {
             if (input.checked) {
-                playerOptions.push(input.id);
+                checked.push(input.id);
             }
         });
-    }
+        return checked;
+    };
+    playerOptions();
+    
+    radioInputs.forEach(input => input.addEventListener('change', () => {
+        playerOptions();
+    }));
+
     return {
-        playerOptions
+        playerOptions,
+        radioInputs
     }
 })();
 
 const gameStatus = (() => {
     const gridCells = document.querySelectorAll('.grid-cell');
-    const gameBoardStatus = {};
+    let gameBoardStatus = {};
 
     // Scan grid cells and populate gameBoardStatus object
     function getGameBoardStatus() {
@@ -41,40 +44,60 @@ const gameStatus = (() => {
     }
     gridCells.forEach(cell => cell.addEventListener('click', () => gameplay.makeMove(cell)));
 
+    function restartGame() {
+
+    }
+
     return {
         gameBoardStatus,
-        getGameBoardStatus
+        getGameBoardStatus,
+        restartGame
     }
 })();
 
 const gameplay = (() => {
-    const xSign = document.querySelector('#x');
-    const oSign = document.querySelector('#o');
 
     function makeMove(cell) {
-        const cellCheck = checkCell(cell);
-        playerMove();
+        const cellStatus = checkCell(cell);
+        if (cellStatus === false) return;
+        playerMove(cell, cellStatus);
         computerMove();
     }
 
     function checkCell(cell) {
         gameStatus.getGameBoardStatus();
-        for (let element in gameStatus.gameBoardStatus) {
-            if (element === cell.id) {
-                
-            }
-        };
+        // Check if clicked cell is empty
+        return gameStatus.gameBoardStatus[cell.id] === 'empty' ? true : false;
     }
 
-    function playerMove() {
-
+    const xSign = document.querySelector('#x');
+    const oSign = document.querySelector('#o');
+    function playerMove(cell, cellStatus) {
+        if (cellStatus === true) {
+            // Prepare player sign
+            let playerSign;
+            if (playerChoices.playerOptions[0] === 'sign-x') {
+                playerSign = xSign.cloneNode(true);
+            } else if (playerChoices.playerOptions[0] === 'sign-o') {
+                playerSign = oSign.cloneNode(true);
+            }
+            // Class sets display: none
+            playerSign.classList.remove('sign-template');
+            // Insert player sign
+            cell.appendChild(playerSign);
+        }
     }
 
     function computerMove() {
-
+        if (playerChoices.playerOptions[1] === 'computer-smart') {
+            computerMoveSmart();
+        } else if (playerChoices.playerOptions[1] === 'computer-random') {
+            computerMoveRandom();
+        }
     }
 
     return {
-        makeMove
+        makeMove,
+        checkCell
     }
 })();
