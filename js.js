@@ -1,55 +1,88 @@
+const variables = (() => {
+    const radioInputs = document.querySelectorAll('input');
+    const gridCells = document.querySelectorAll('.grid-cell');
+    const xSign = document.querySelector('#x');
+    const oSign = document.querySelector('#o');
+    let playerOptions;
+    let playerSign;
+    let computerSign;
+    let gameBoardStatus = {};
+
+    return {
+        radioInputs,
+        gridCells,
+        xSign,
+        oSign,
+        playerOptions,
+        playerSign,
+        computerSign,
+        gameBoardStatus
+    }
+})();
+
 const playerChoices = (() => {
     // Get data from inputs
-    const radioInputs = document.querySelectorAll('input');
-    let playerOptions = function() {
-        let checked = [];
-        radioInputs.forEach(input => {
+    getPlayerOptions();
+    function getPlayerOptions() {
+        variables.playerOptions = [];
+        variables.radioInputs.forEach(input => {
             if (input.checked) {
-                checked.push(input.id);
+                variables.playerOptions.push(input.id);
             }
         });
-        return checked;
-    };
-    playerOptions();
-    
-    radioInputs.forEach(input => input.addEventListener('change', () => {
-        playerOptions();
+    }
+
+    assignSigns();
+    function assignSigns() {
+            // Assign and prepare sign graphics for players
+            if (variables.playerOptions[0] === 'sign-x') {
+                variables.playerSign = variables.xSign.cloneNode(true);
+                variables.computerSign = variables.oSign.cloneNode(true);
+            } else if (variables.playerOptions[0] === 'sign-o') {
+                variables.playerSign = variables.oSign.cloneNode(true);
+                variables.computerSign = variables.xSign.cloneNode(true);
+            }
+            // Class sets display: none
+            variables.playerSign.classList.remove('sign-template');
+            variables.computerSign.classList.remove('sign-template');
+    }
+
+    variables.radioInputs.forEach(input => input.addEventListener('change', () => {
+        gameStatus.restartGame();
+        getPlayerOptions();
+        assignSigns()
     }));
 
     return {
-        playerOptions,
-        radioInputs
+        getPlayerOptions
     }
 })();
 
 const gameStatus = (() => {
-    const gridCells = document.querySelectorAll('.grid-cell');
-    let gameBoardStatus = {};
 
     // Scan grid cells and populate gameBoardStatus object
     function getGameBoardStatus() {
-        gridCells.forEach(cell => {
+        variables.gridCells.forEach(cell => {
             if (!cell.innerHTML) {
-                gameBoardStatus[cell.id] = 'empty';
+                variables.gameBoardStatus[cell.id] = 'empty';
             }
             if (cell.innerHTML) {
                 if (cell.firstChild.id === 'x') {
-                    gameBoardStatus[cell.id] = 'x';
+                    variables.gameBoardStatus[cell.id] = 'x';
                 } 
                 if (cell.firstChild.id === 'o') {
-                    gameBoardStatus[cell.id] = 'o';
+                    variables.gameBoardStatus[cell.id] = 'o';
                 }
             }
         });
     }
-    gridCells.forEach(cell => cell.addEventListener('click', () => gameplay.makeMove(cell)));
+    variables.gridCells.forEach(cell => cell.addEventListener('click', () => gameplay.makeMove(cell)));
 
     function restartGame() {
 
     }
 
     return {
-        gameBoardStatus,
         getGameBoardStatus,
         restartGame
     }
@@ -60,44 +93,44 @@ const gameplay = (() => {
     function makeMove(cell) {
         const cellStatus = checkCell(cell);
         if (cellStatus === false) return;
-        playerMove(cell, cellStatus);
+        playerMove(cell);
+        gameStatus.getGameBoardStatus();
         computerMove();
     }
 
     function checkCell(cell) {
         gameStatus.getGameBoardStatus();
         // Check if clicked cell is empty
-        return gameStatus.gameBoardStatus[cell.id] === 'empty' ? true : false;
+        return variables.gameBoardStatus[cell.id] === 'empty' ? true : false;
     }
+    
+    
 
-    const xSign = document.querySelector('#x');
-    const oSign = document.querySelector('#o');
-    function playerMove(cell, cellStatus) {
+    function playerMove(cell) {
         if (cellStatus === true) {
-            // Prepare player sign
-            let playerSign;
-            if (playerChoices.playerOptions[0] === 'sign-x') {
-                playerSign = xSign.cloneNode(true);
-            } else if (playerChoices.playerOptions[0] === 'sign-o') {
-                playerSign = oSign.cloneNode(true);
-            }
-            // Class sets display: none
-            playerSign.classList.remove('sign-template');
             // Insert player sign
-            cell.appendChild(playerSign);
+            cell.appendChild(variables.playerSign);
         }
+        
     }
 
     function computerMove() {
-        if (playerChoices.playerOptions[1] === 'computer-smart') {
+        if (variables.playerOptions[1] === 'computer-smart') {
             computerMoveSmart();
-        } else if (playerChoices.playerOptions[1] === 'computer-random') {
+        } else if (variables.playerOptions[1] === 'computer-random') {
             computerMoveRandom();
         }
     }
 
+    function computerMoveSmart() {
+
+    }
+
+    function computerMoveRandom() {
+
+    }
+
     return {
-        makeMove,
-        checkCell
+        makeMove
     }
 })();
