@@ -1,9 +1,9 @@
 const v = (() => {
     const gridCells = document.querySelectorAll('.grid-cell');
     let gameBoardStatus = {};
-    let playerOptions;
-    let player1Sign;
-    let player2Sign;
+    let playerOptions = [];
+    let player1Sign = null;
+    let player2Sign = null;
     let turn = 'player1';
 
     return {
@@ -50,16 +50,19 @@ const playerChoices = (() => {
     _radioInputs.forEach(input => input.addEventListener('change', () => {
         gameStatus.restartGame();
         getPlayerOptions();
-        assignSigns()
+        assignSigns();
     }));
 
     return {
-        getPlayerOptions
+        getPlayerOptions,
+        assignSigns
     }
 })();
 
 const gameStatus = (() => {
-    const restartButton = document.querySelector('#restart');
+    const _restartButton = document.querySelector('#restart');
+    _restartButton.addEventListener('click', () => restartGame());
+
     // Scan grid cells and populate gameBoardStatus object
     function getGameBoardStatus() {
         v.gridCells.forEach(cell => {
@@ -76,6 +79,7 @@ const gameStatus = (() => {
             }
         });
     }
+
     v.gridCells.forEach(cell => cell.addEventListener('click', () => {
         if (!cell.innerHTML) {            
             gameplay.makeMove(cell);
@@ -92,7 +96,13 @@ const gameStatus = (() => {
     }));
 
     function restartGame() {
-
+        v.gridCells.forEach(cell => cell.innerHTML = '');
+        v.gameBoardStatus = {};
+        v.playerOptions = [];
+        v.player1Sign = null;
+        v.player2Sign = null;
+        v.turn = 'player1';
+        playerChoices.getPlayerOptions();
     }
 
     return {
@@ -106,9 +116,14 @@ const gameplay = (() => {
     function makeMove(cell) {
         humanMove(cell);
         gameStatus.getGameBoardStatus();
-        
+        checkEmptyCells();
+        checkForWinner();
+
         if (v.playerOptions[1] === 'computer') {
             computerMove();
+            gameStatus.getGameBoardStatus();
+            checkEmptyCells();
+            checkForWinner();
         }
     }
     
@@ -120,32 +135,55 @@ const gameplay = (() => {
             } else if (v.turn === 'player2') {
                 sign = v.player2Sign;
             }
+            console.log(sign)
             cell.appendChild(sign.cloneNode(true));
     }
 
     function computerMove() {
         // Randomly choose an empty field
-        let emptyCells = [];
-        for (let cell in v.gameBoardStatus) {
-            if (v.gameBoardStatus[cell] === 'empty') emptyCells.push(cell);
-        }
+        emptyCells = checkEmptyCells();
         let randomCell = emptyCells[[Math.floor(Math.random() * (emptyCells.length - 1))]]
         if (randomCell === undefined) return;
         // Populate this field
         v.gridCells[+randomCell - 1].appendChild(v.player2Sign.cloneNode(true));
         }
 
+    function checkEmptyCells() {
+        let emptyCells = [];
+        for (let cell in v.gameBoardStatus) {
+            if (v.gameBoardStatus[cell] === 'empty') emptyCells.push(cell);
+        }
+        // End game if there are no empty fields
+        if (emptyCells.length === 0) {
+            announceTie();
+            return;
+        }
+        return emptyCells;
+    }
+
     function checkForWinner() {
-        checkRows();
-        checkColumns();
-        checkDiagonals();
+        let check1 = checkRows();
+        if (check1) {
+            endGame(check1);
+            return;
+        }
+        let check2 = checkColumns();
+        if (check2) {
+            endGame(check2);
+            return;
+        }
+        let check3 = checkDiagonals();
+        if (check3) {
+            endGame(check3);
+            return;
+        }
     }
 
     function checkRows() {
         for (let i = 1; i < 10; i += 3) {
             if (v.gameBoardStatus[i] === v.gameBoardStatus[i + 1] && v.gameBoardStatus[i] === v.gameBoardStatus[i + 2] 
                 && v.gameBoardStatus[i] != 'empty' && v.gameBoardStatus[i] != undefined) {
-                endGame();
+                    return i;
             }
         }
     }
@@ -154,7 +192,7 @@ const gameplay = (() => {
         for (let i = 1; i < 10; i++) {
             if (v.gameBoardStatus[i] === v.gameBoardStatus[i + 3] && v.gameBoardStatus[i] === v.gameBoardStatus[i + 6] 
                 && v.gameBoardStatus[i] != 'empty' && v.gameBoardStatus[i] != undefined) {
-                endGame();
+                return i;
             }
         }
     }
@@ -162,15 +200,29 @@ const gameplay = (() => {
     function checkDiagonals() {
             if (v.gameBoardStatus[1] === v.gameBoardStatus[5] && v.gameBoardStatus[1] === v.gameBoardStatus[9] 
                 && v.gameBoardStatus[1] != 'empty' && v.gameBoardStatus[1] != undefined) {
-                endGame();
+                return 1;
             } else if (v.gameBoardStatus[3] === v.gameBoardStatus[5] && v.gameBoardStatus[3] === v.gameBoardStatus[7] 
-                && v.gameBoardStatus[3] != 'empty' && v.gameBoardStatus[3] != undefined) {
-                    endGame();
+                    && v.gameBoardStatus[3] != 'empty' && v.gameBoardStatus[3] != undefined) {
+                return 3;
                 }
     }
 
-    function endGame() {
-        console.log('winner!')
+    function endGame(winnerId) {
+        let winner;
+        let winnerSign = v.gridCells[winnerId - 1].firstChild.id;
+        if (winnerSign === 'x' && v.playerOptions[0] === 'sign-x') {
+            winner = 'Player 1';
+        } else if (winnerSign === 'o' && v.playerOptions[0] === 'sign-o') {
+            winner = 'Player 1';
+        } else {
+            winner = 'Player 2';
+        }
+
+        console.log(`${winner} won!`)
+    }
+
+    function announceTie() {
+        console.log('Tie!');
     }
 
     return {
