@@ -1,5 +1,7 @@
 const v = (() => {
+    const gridContainer = document.querySelector('.grid-container');
     const gridCells = document.querySelectorAll('.grid-cell');
+    const scoreDiv = document.querySelector('#score');
     let gameBoardStatus = {};
     let playerOptions = [];
     let player1Sign = null;
@@ -7,7 +9,9 @@ const v = (() => {
     let turn = 'player1';
 
     return {
+        gridContainer,
         gridCells,
+        scoreDiv,
         gameBoardStatus,
         playerOptions,
         player1Sign,
@@ -43,8 +47,8 @@ const playerChoices = (() => {
                 v.player2Sign = _xSign.cloneNode(true);
             }
             // Class sets display: none
-            v.player1Sign.classList.remove('sign-template');
-            v.player2Sign.classList.remove('sign-template');
+            v.player1Sign.classList.remove('invisible');
+            v.player2Sign.classList.remove('invisible');
     }
 
     _radioInputs.forEach(input => input.addEventListener('change', () => {
@@ -60,8 +64,6 @@ const playerChoices = (() => {
 })();
 
 const gameStatus = (() => {
-    const _body = document.querySelector('body');
-    const _gridContainer = document.querySelector('.grid-container');
     const _restartButton = document.querySelector('#restart');
     _restartButton.addEventListener('click', () => restartGame());
 
@@ -84,8 +86,8 @@ const gameStatus = (() => {
 
     function gridListener(event) {
         let cell = event.target;
-        console.log(cell)
-        if (!cell.innerHTML) {            
+        console.log(cell.tagName)
+        if (!cell.innerHTML && cell.tagName != 'IMG') {            
             gameplay.makeMove(cell);
 
             // Track whose turn is next
@@ -109,13 +111,13 @@ const gameStatus = (() => {
     }
     
     function restartGame() {
+        v.scoreDiv.classList.add('invisible');
+        v.gridContainer.classList.remove('fade');
         v.gridCells.forEach(cell => cell.innerHTML = '');
         v.gameBoardStatus = {};
-        v.playerOptions = [];
-        v.player1Sign = null;
-        v.player2Sign = null;
         v.turn = 'player1';
-        playerChoices.getPlayerOptions();
+        removeGridListeners();
+        addGridListeners();
     }
 
     return {
@@ -132,7 +134,9 @@ const gameplay = (() => {
         humanMove(cell);
         gameStatus.getGameBoardStatus();
         checkEmptyCells();
-        checkForWinner();
+
+        let check = checkForWinner();
+        if (check === true) return;
 
         if (v.playerOptions[1] === 'computer') {
             computerMove();
@@ -179,17 +183,17 @@ const gameplay = (() => {
         let check1 = checkRows();
         if (check1) {
             endGame(check1);
-            return;
+            return true;
         }
         let check2 = checkColumns();
         if (check2) {
             endGame(check2);
-            return;
+            return true;
         }
         let check3 = checkDiagonals();
         if (check3) {
             endGame(check3);
-            return;
+            return true;
         }
     }
 
@@ -222,6 +226,7 @@ const gameplay = (() => {
     }
 
     function endGame(winnerId) {
+        // Determine winner
         let winner;
         let winnerSign = v.gridCells[winnerId - 1].firstChild.id;
         if (winnerSign === 'x' && v.playerOptions[0] === 'sign-x') {
@@ -231,12 +236,19 @@ const gameplay = (() => {
         } else {
             winner = 'Player 2';
         }
+        endgameEffects();
+        v.scoreDiv.innerHTML = `${winner} won!`;
+    }
 
-        console.log(`${winner} won!`)
+    function endgameEffects() {
+        gameStatus.removeGridListeners();
+        v.gridContainer.classList.add('fade');
+        v.scoreDiv.classList.remove('invisible');
     }
 
     function announceTie() {
-        console.log('Tie!');
+        endgameEffects();
+        v.scoreDiv.innerHTML = `Tie!`;
     }
 
     return {
