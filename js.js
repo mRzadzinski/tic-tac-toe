@@ -60,6 +60,8 @@ const playerChoices = (() => {
 })();
 
 const gameStatus = (() => {
+    const _body = document.querySelector('body');
+    const _gridContainer = document.querySelector('.grid-container');
     const _restartButton = document.querySelector('#restart');
     _restartButton.addEventListener('click', () => restartGame());
 
@@ -80,7 +82,9 @@ const gameStatus = (() => {
         });
     }
 
-    v.gridCells.forEach(cell => cell.addEventListener('click', () => {
+    function gridListener(event) {
+        let cell = event.target;
+        console.log(cell)
         if (!cell.innerHTML) {            
             gameplay.makeMove(cell);
 
@@ -93,8 +97,17 @@ const gameStatus = (() => {
                 v.turn = 'player1';
             }
         }
-    }));
+    }
 
+    addGridListeners();
+    function addGridListeners() {
+        v.gridCells.forEach(cell => cell.addEventListener('click', gridListener));
+    }
+
+    function removeGridListeners() {
+        v.gridCells.forEach(cell => cell.removeEventListener('click', gridListener));
+    }
+    
     function restartGame() {
         v.gridCells.forEach(cell => cell.innerHTML = '');
         v.gameBoardStatus = {};
@@ -107,6 +120,8 @@ const gameStatus = (() => {
 
     return {
         getGameBoardStatus,
+        addGridListeners,
+        removeGridListeners,
         restartGame
     }
 })();
@@ -135,15 +150,14 @@ const gameplay = (() => {
             } else if (v.turn === 'player2') {
                 sign = v.player2Sign;
             }
-            console.log(sign)
             cell.appendChild(sign.cloneNode(true));
     }
 
     function computerMove() {
         // Randomly choose an empty field
         emptyCells = checkEmptyCells();
+        if (emptyCells === undefined) return;
         let randomCell = emptyCells[[Math.floor(Math.random() * (emptyCells.length - 1))]]
-        if (randomCell === undefined) return;
         // Populate this field
         v.gridCells[+randomCell - 1].appendChild(v.player2Sign.cloneNode(true));
         }
