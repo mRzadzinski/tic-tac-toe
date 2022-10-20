@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;500&display=swap');
 
-$responsive-width: clamp(400px, 60vw, 900px);
-
 body {
     display: grid;
     grid-template-rows: 1fr 3fr .6fr auto;
@@ -13,7 +11,7 @@ body {
     font-family: 'Mulish', sans-serif;
     height: 100vh;
     width: 100vw;
-	min-height: 750px;
+	min-height: 764px;
 }
 
 .header {
@@ -21,7 +19,7 @@ body {
     grid-template-columns: 1fr 1fr;
     justify-items: center;
     align-items: center;
-    width: $responsive-width;
+    width: clamp(400px, 60vw, 900px);
 	height: 100%;
 	padding-top: 2rem;
 
@@ -146,7 +144,7 @@ footer {
 
 // Custom radio buttons from https://freefrontend.com/css-radio-buttons/
 // by Håvard Brynjulfsen
-$primary-color: #007bff; // Change color here. C'mon, try it! 
+$primary-color: #007bff;
 $text-color: mix(#000, $primary-color, 64%);
 
 form {

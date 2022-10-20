@@ -46,7 +46,6 @@ const playerChoices = (() => {
                 v.player1Sign = _oSign.cloneNode(true);
                 v.player2Sign = _xSign.cloneNode(true);
             }
-            // Class sets display: none
             v.player1Sign.classList.remove('invisible');
             v.player2Sign.classList.remove('invisible');
     }
@@ -58,14 +57,13 @@ const playerChoices = (() => {
     }));
 
     return {
-        getPlayerOptions,
         assignSigns
     }
 })();
 
 const gameStatus = (() => {
     const _restartButton = document.querySelector('#restart');
-    _restartButton.addEventListener('click', () => restartGame());
+    _restartButton.addEventListener('click', restartGame);
 
     // Scan grid cells and populate gameBoardStatus object
     function getGameBoardStatus() {
@@ -86,7 +84,6 @@ const gameStatus = (() => {
 
     function gridListener(event) {
         let cell = event.target;
-        console.log(cell.tagName)
         if (!cell.innerHTML && cell.tagName != 'IMG') {            
             gameplay.makeMove(cell);
 
@@ -116,13 +113,11 @@ const gameStatus = (() => {
         v.gridCells.forEach(cell => cell.innerHTML = '');
         v.gameBoardStatus = {};
         v.turn = 'player1';
-        removeGridListeners();
         addGridListeners();
     }
 
     return {
         getGameBoardStatus,
-        addGridListeners,
         removeGridListeners,
         restartGame
     }
@@ -225,10 +220,10 @@ const gameplay = (() => {
                 }
     }
 
-    function endGame(winnerId) {
+    function endGame(cellNumber) {
         // Determine winner
         let winner;
-        let winnerSign = v.gridCells[winnerId - 1].firstChild.id;
+        let winnerSign = v.gridCells[cellNumber - 1].firstChild.id;
         if (winnerSign === 'x' && v.playerOptions[0] === 'sign-x') {
             winner = 'Player 1';
         } else if (winnerSign === 'o' && v.playerOptions[0] === 'sign-o') {
@@ -240,19 +235,18 @@ const gameplay = (() => {
         v.scoreDiv.innerHTML = `${winner} won!`;
     }
 
+    function announceTie() {
+        endgameEffects();
+        v.scoreDiv.innerHTML = `Tie!`;
+    }
+
     function endgameEffects() {
         gameStatus.removeGridListeners();
         v.gridContainer.classList.add('fade');
         v.scoreDiv.classList.remove('invisible');
     }
 
-    function announceTie() {
-        endgameEffects();
-        v.scoreDiv.innerHTML = `Tie!`;
-    }
-
     return {
         makeMove,
-        checkForWinner
     }
 })();
